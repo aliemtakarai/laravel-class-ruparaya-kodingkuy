@@ -8,6 +8,9 @@ Route::prefix('profile')->group(function(){
     Route::get('/', [StudentController::class,'index']);
     Route::get('/{nama}',[StudentController::class,'profile']);
 });
+Route::get('/', function () {
+    return view('welcome');
+});
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
