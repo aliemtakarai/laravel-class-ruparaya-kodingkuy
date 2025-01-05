@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Auth;
 
 class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::select('books.id','title','cover', 'description','user_id')
-                // ->with('user')
+        $books = Book::select('id','title','cover', 'description','user_id')
+                // ->where('user_id', Auth::user()->id)
+                ->when((Auth::user()->level == 'User'), function($query){
+                    $query->where('user_id', Auth::user()->id);
+                })
                 ->paginate(10);
         return view("book.index", compact('books'));
     }
@@ -41,7 +45,7 @@ class BookController extends Controller
             $book->title = $request->title;
             $book->cover = $request->file('cover')->store('book', 'public');
             $book->description = $request->desc;
-            $book->user_id = Auth::user()->id;
+            $book->user_id = \Auth::user()->id;
             $book->save();
 
             return redirect()->route('book.index')->with('success', 'Berhasil menambahkan data');
